@@ -4,7 +4,9 @@ export function fetchCountries(name) {
 
   return fetch(urlName)
     .then(response => {
-      return response.json();
+      if (response.status === 200) {
+        return response.json();
+      }
     })
     .catch(reject => {
       if (response.status === 404) {
