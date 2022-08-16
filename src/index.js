@@ -20,25 +20,23 @@ function nameInput(e) {
     clearInput();
     return;
   }
+  clearInput();
 
   return fetchCountries(nameCountry)
     .then(names => {
       renderList(names);
     })
     .catch(error => {
-      console.log('error');
+      Notiflix.Notify.failure('Oops, there is no country with that name');
+      return console.log('error');
     });
 }
 
-function clearInput() {
-  refs.list.innerHTML = '';
-}
+const listCountry = item => `<li class="nameList">
+<img src="${item.flags.svg}" width=30px heigth = 20px> ${item.name.official}</li>`;
 
-const listCountry = item => `<li>
-<img src="${item.flags.svg}" width=50px> ${item.name.official}</li>`;
-
-const informationCountry = item => `<li>
-<h1><img src="${item.flags.svg}" width= 50px>${item.name.official}</h1>
+const informationCountry = item => `<li class="nameList">
+<h1><img src="${item.flags.svg}" width = 50px>${item.name.official}</h1>
 <p>Capital: ${item.capital}</p>
 <p>Population: ${item.population}</p>
 <p>Languages: ${Object.values(item.languages)}</p>
@@ -58,22 +56,9 @@ function markupConditions(array) {
 }
 
 function renderList(array) {
-  const result = markupConditions(array);
-  console.log(result);
-  return console.log(refs.list.insertAdjacentHTML('beforeend', result));
+  refs.list.insertAdjacentHTML('beforeend', markupConditions(array));
 }
 
-// 2. при введені список оновлювати- а не добавляти
-// 3. розмітку відкорегувати
-//console.log(
-//  fetch(
-//    'https://restcountries.com/v3.1/all?fields=name.official,capital,population,flags.svg,languages'
-//  )
-//);
-//.then(response => {
-//    if (!response.ok) {
-//      return Notiflix.Notify.failure(
-//        'Oops, there is no country with that name'
-//      );
-//    }
-//  })
+function clearInput() {
+  refs.list.innerHTML = '';
+}
