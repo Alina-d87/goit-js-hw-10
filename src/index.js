@@ -22,9 +22,27 @@ function nameInput(e) {
   }
   clearInput();
 
-  return fetchCountries(nameCountry)
-    .then(names => {
-      renderList(names);
+  fetchCountries(nameCountry)
+    .then(array => {
+      if (array.length > 10) {
+        Notiflix.Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
+      }
+      if (array.length >= 2 && array.length <= 10) {
+        const result = array?.reduce(
+          (acc, item) => acc + listCountry(item),
+          ''
+        );
+        refs.list.insertAdjacentHTML('beforeend', result);
+      }
+      if (array.length === 1) {
+        const resultCounry = array?.reduce(
+          (acc, item) => acc + informationCountry(item),
+          ''
+        );
+        refs.list.insertAdjacentHTML('beforeend', resultCounry);
+      }
     })
     .catch(error => {
       Notiflix.Notify.failure('Oops, there is no country with that name');
@@ -41,23 +59,6 @@ const informationCountry = item => `<li class="nameList">
 <p>Population: ${item.population}</p>
 <p>Languages: ${Object.values(item.languages)}</p>
 </li>`;
-
-function markupConditions(array) {
-  if (array.length > 10) {
-    Notiflix.Notify.info(
-      'Too many matches found. Please enter a more specific name.'
-    );
-    return;
-  } else if (array.length >= 2 && array.length <= 10) {
-    return array?.reduce((acc, item) => acc + listCountry(item), '');
-  } else if (array.length === 1) {
-    return array?.reduce((acc, item) => acc + informationCountry(item), '');
-  }
-}
-
-function renderList(array) {
-  refs.list.insertAdjacentHTML('beforeend', markupConditions(array));
-}
 
 function clearInput() {
   refs.list.innerHTML = '';
